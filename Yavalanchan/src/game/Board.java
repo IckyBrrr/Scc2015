@@ -17,7 +17,12 @@ public class Board {
 		for(int i = 0; i < columns.length; i++) {
 			int x = i + 1;
 			int y = -1 * Math.abs(x - size) + maxLength;
-			columns[i] = new Column(y, i);
+			
+			int offset;
+			if(x <= size) offset = 0;
+			else offset = x - size;
+			
+			columns[i] = new Column(y, x, offset);
 		}
 	}
 	
