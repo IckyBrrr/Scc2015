@@ -9,6 +9,8 @@ public class Main {
 	public static final byte BLACK = 2; // Player B
 	public static final byte RED = 3; // Neutral
 	
+	public static final int SIZE = 3;
+	
 	public static Scanner in;
 	public static Board board;
 	
@@ -17,7 +19,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		in = new Scanner(System.in);
-		board = new Board(3);
+		board = new Board(SIZE);
 		isRunning = true;
 		
 		render();
