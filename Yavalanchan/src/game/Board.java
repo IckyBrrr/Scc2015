@@ -26,4 +26,9 @@ public class Board {
 			columns[i].print();
 		}
 	}
+	
+	public boolean occupy(byte color, int x, int y) {
+		
+		return columns[x].occupy(color, y);
+	}
 }

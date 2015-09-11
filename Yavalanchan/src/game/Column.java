@@ -17,4 +17,8 @@ public class Column {
 		}
 		System.out.print("\n");
 	}
+	
+	public boolean occupy(byte color, int y) {
+		return tiles[y].occupy(color);
+	}
 }
