@@ -24,10 +24,10 @@ public class Main {
 		
 		render();
 		
-		while(isRunning) {
+		/*while(isRunning) {
 			update();
 			render();
-		}
+		}*/
 	}
 	
 	public static void update() {

@@ -27,13 +27,39 @@ public class Board {
 	}
 	
 	public void print() {
-		String[] output = new String[Main.SIZE];
-		for(int x = 0; x < columns.length; x++) {
-			for(int i = 0; i < Math.abs(Main.SIZE - (x + 1)); i++) {
-				System.out.print(" ");
+		
+		int spacing = 1;
+		String buffer = "";
+		for(int i = 0; i < spacing; i++) buffer += " ";
+		
+		// Initialize output
+		int xMax = 2 * Main.SIZE - 1;
+		int yMax = 4 * Main.SIZE - 3;
+		String[][] output = new String[xMax][yMax];
+		for(int x = 0; x < xMax; x++) {
+			for(int y = 0; y < yMax; y++) {
+				output[x][y] = " ";
 			}
+		}
+		
+		// Yes
+		for(int x = 0; x < columns.length; x++) {
 			for(int y = 0; y < columns[x].tiles.length; y++) {
-				System.out.print(columns[x].tiles[y].getY() + " ");
+				int offset = Math.abs((Main.SIZE - 1) - x);
+				int yCor = ((y + 1) * 2 - 1) + offset - 1;
+				
+				/*System.out.printf("(%d, %d)\n", x, y);
+				System.out.printf("Offset : %d\n", offset);
+				System.out.printf("X Coor : %d\n", xCor);*/
+				
+				output[x][yCor] = Integer.toString(x);
+			}
+		}
+		
+		// Print output
+		for(int y = 0; y < yMax; y++) {
+			for(int x = 0; x < xMax; x++) {
+				System.out.print(buffer + output[x][y] + buffer);
 			}
 			System.out.print("\n");
 		}
