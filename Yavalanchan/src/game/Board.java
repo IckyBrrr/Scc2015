@@ -48,16 +48,12 @@ public class Board {
 				int offset = Math.abs((Main.SIZE - 1) - x);
 				int yCor = ((y + 1) * 2 - 1) + offset - 1;
 				
-				/*System.out.printf("(%d, %d)\n", x, y);
-				System.out.printf("Offset : %d\n", offset);
-				System.out.printf("X Coor : %d\n", xCor);*/
-				
-				output[x][yCor] = Integer.toString(x);
+				output[x][yCor] = Integer.toString(columns[x].tiles[y].getOccupant());
 			}
 		}
 		
 		// Print output
-		for(int y = 0; y < yMax; y++) {
+		for(int y = yMax - 1; y >= 0; y--) {
 			for(int x = 0; x < xMax; x++) {
 				System.out.print(buffer + output[x][y] + buffer);
 			}
