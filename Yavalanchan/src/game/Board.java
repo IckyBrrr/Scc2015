@@ -64,7 +64,7 @@ public class Board {
 	
 	public boolean occupy(byte color, int x, int y) {
 		
-		return columns[x].occupy(color, y);
+		return columns[x].occupy(color, y, this);
 	}
 	
 	public boolean isAdjacent(int[] coor1, int[] coor2) {
@@ -88,7 +88,6 @@ public class Board {
 				}
 			}
 		}
-		System.out.println("Tile doesn't exist");
 		return new Tile(-1, -1);
 	}
 	

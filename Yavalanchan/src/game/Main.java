@@ -6,9 +6,9 @@ public class Main {
 	
 	public static final byte DNE = -1; // Tile doesn't exist
 	public static final byte EMPTY = 0; // Empty slot
-	public static final byte WHITE = 1; // Player A
-	public static final byte BLACK = 2; // Player B
-	public static final byte RED = 3; // Neutral
+	public static final byte PLAYER_A = 1; // Player A
+	public static final byte PLAYER_B = 2; // Player B
+	public static final byte NEUTRAL = 3; // Neutral
 	
 	public static final int SIZE = 2;
 	
@@ -47,7 +47,6 @@ public class Main {
 			x = in.nextInt();
 			y = in.nextInt();
 			canMoveOn = board.occupy(color, x, y);
-			if(!canMoveOn)  print("That space is occupied!");
 		} while(!canMoveOn);
 	}
 	
