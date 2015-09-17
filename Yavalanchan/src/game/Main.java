@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 	
+	public static final byte DNE = -1; // Tile doesn't exist
 	public static final byte EMPTY = 0; // Empty slot
 	public static final byte WHITE = 1; // Player A
 	public static final byte BLACK = 2; // Player B
@@ -37,7 +38,7 @@ public class Main {
 		boolean canMoveOn;
 		
 		do {
-			print("What coordinate? (color, x, y)");
+			print("What coordinate? (color x y)");
 			color = in.nextByte();
 			if(color == EMPTY) {
 				isRunning = false;

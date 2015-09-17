@@ -28,9 +28,10 @@ public class Board {
 	
 	public void print() {
 		
-		int spacing = 1;
+		int spacing = 2;
+		String blank = " ";
 		String buffer = "";
-		for(int i = 0; i < spacing; i++) buffer += " ";
+		for(int i = 0; i < spacing; i++) buffer += blank;
 		
 		// Initialize output
 		int xMax = 2 * Main.SIZE - 1;
@@ -38,7 +39,7 @@ public class Board {
 		String[][] output = new String[xMax][yMax];
 		for(int x = 0; x < xMax; x++) {
 			for(int y = 0; y < yMax; y++) {
-				output[x][y] = " ";
+				output[x][y] = blank;
 			}
 		}
 		
@@ -74,5 +75,60 @@ public class Board {
 		return((x1 == x2 && Math.abs(y1 - y2) == 1) ||
 			   (Math.abs(x1 - x2) == 1 && Math.abs(y1 - y2) == 1) ||
 			   (Math.abs(x1 - x2) == 1 && y1 == y2));
+	}
+	
+	public Tile getTile(int[] coor) {
+		int xCor = coor[0];
+		int yCor = coor[1];
+		for(int x = 0; x < columns.length; x++) {
+			for(int y = 0; y < columns[x].tiles.length; y++) {
+				if(columns[x].tiles[y].getX() == xCor &&
+					columns[x].tiles[y].getY() == yCor) {
+					return columns[x].tiles[y];
+				}
+			}
+		}
+		System.out.println("Tile doesn't exist");
+		return new Tile(-1, -1);
+	}
+	
+	public Tile[] getAdjacentTiles(int[] coor) {
+		int x = coor[0];
+		int y = coor[1];
+		Tile[] adjacent = new Tile[6];
+		int[] temp = new int[2];
+		for(int i = 0; i < adjacent.length; i++) {
+			switch(i) {
+			case 0:
+				temp[0] = x;
+				temp[1] = y + 1;
+				break;
+			case 1:
+				temp[0] = x;
+				temp[1] = y - 1;
+				break;
+			case 2:
+				temp[0] = x - 1;
+				temp[1] = y;
+				break;
+			case 3:
+				temp[0] = x - 1;
+				temp[1] = y - 1;
+				break;
+			case 4:
+				temp[0] = x + 1;
+				temp[1] = y + 1;
+				break;
+			case 5:
+				temp[0] = x + 1;
+				temp[1] = y;
+				break;
+			default:
+				temp[0] = 1;
+				temp[1] = 1;
+			}
+			adjacent[i] = getTile(temp);
+		}
+		return adjacent;
 	}
 }
