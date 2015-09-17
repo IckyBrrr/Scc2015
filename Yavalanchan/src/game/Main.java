@@ -36,17 +36,44 @@ public class Main {
 		int y;
 		byte color;
 		boolean canMoveOn;
-		
 		do {
-			print("What coordinate? (color x y)");
+			do {
+				System.out.println("What X?");
+				x = in.nextInt() - 1;
+				if((x < SIZE * 2 - 1) && (x >= 0)) {
+					canMoveOn = true;
+				} else {
+					System.out.println("X doesn't exist");
+					canMoveOn = false;
+				}
+			} while(!canMoveOn);
+			
+			canMoveOn = false;
+			
+			do {
+				System.out.println("What Y?");
+				y = in.nextInt() - 1;
+				if((y < board.columns[x].tiles.length) && (y >= 0)) {
+					canMoveOn = true;
+				} else {
+					System.out.println("Y doesn't exist");
+					canMoveOn = false;
+				}
+			} while(!canMoveOn);
+		
+			canMoveOn = false;
+		
+			System.out.println("What Color?");
 			color = in.nextByte();
 			if(color == EMPTY) {
 				isRunning = false;
 				break;
 			}
-			x = in.nextInt();
-			y = in.nextInt();
-			canMoveOn = board.occupy(color, x, y);
+			if(!(color == NEUTRAL || color == PLAYER_A || color == PLAYER_B)) {
+				System.out.println("Invalid color");
+			} else {
+				canMoveOn = board.occupy(color, x, y);
+			}
 		} while(!canMoveOn);
 	}
 	
