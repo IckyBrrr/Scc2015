@@ -83,6 +83,8 @@ public class Main {
 				canMoveOn = board.occupy(occupant, x, y);
 			}
 		} while(!canMoveOn);
+		int tempx = 4, tempy = 4;
+		System.out.printf("Owner for (%d, %d) is : %s\n", tempx, tempy, board.getTile(tempx, tempy).getOwner().toString());
 	}
 	
 	public static void render() {

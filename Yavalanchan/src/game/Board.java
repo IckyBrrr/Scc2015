@@ -63,8 +63,44 @@ public class Board {
 	}
 	
 	public boolean occupy(TileState occupant, int x, int y) {
-		
-		return columns[x].occupy(occupant, y, this);
+		boolean isSuccessful = columns[x].occupy(occupant, y, this);
+		if(isSuccessful) {
+			int[] coor = columns[x].tiles[y].getCoor();
+			System.out.printf("(%d, %d)\n", coor[0], coor[1]);
+			if(occupant == TileState.WHITE || occupant == TileState.BLACK) {
+				// update all adjacent neutral tiles
+				Tile[] adjacentTiles = getAdjacentTiles(coor[0], coor[1]);
+				for(int i = 0; i < adjacentTiles.length; i++) {
+					if(adjacentTiles[i].getOccupant() == TileState.NEUTRAL) {
+						updateOwnership(adjacentTiles[i].getX(), adjacentTiles[i].getY());
+					}
+				}
+			} else if(occupant == TileState.NEUTRAL) {
+				// update this tile
+				updateOwnership(coor[0], coor[1]);
+			}
+		}
+		return isSuccessful;
+	}
+	
+	private void updateOwnership(int x, int y) {
+		int numWhite = 0, numBlack = 0;
+		Tile[] adjacentTiles= getAdjacentTiles(x, y);
+		for(Tile temp : adjacentTiles) {
+			if(temp.getOccupant() == TileState.WHITE) numWhite++;
+			else if(temp.getOccupant() == TileState.BLACK) numBlack++;
+		}
+		if(numWhite >= 2 || numBlack >= 2) {
+			if(numWhite > numBlack) {
+				getTile(x, y).setOwner(TileState.WHITE);
+			} else if(numBlack > numWhite) {
+				getTile(x, y).setOwner(TileState.BLACK);
+			} else {
+				getTile(x, y).setOwner(TileState.NEUTRAL);
+			}
+		} else {
+			getTile(x, y).setOwner(TileState.NEUTRAL);
+		}
 	}
 	
 	public boolean isAdjacent(int[] coor1, int[] coor2) {
@@ -77,9 +113,7 @@ public class Board {
 			   (Math.abs(x1 - x2) == 1 && y1 == y2));
 	}
 	
-	public Tile getTile(int[] coor) {
-		int xCor = coor[0];
-		int yCor = coor[1];
+	public Tile getTile(int xCor, int yCor) {
 		for(int x = 0; x < columns.length; x++) {
 			for(int y = 0; y < columns[x].tiles.length; y++) {
 				if(columns[x].tiles[y].getX() == xCor &&
@@ -91,9 +125,7 @@ public class Board {
 		return new Tile(-1, -1);
 	}
 	
-	public Tile[] getAdjacentTiles(int[] coor) {
-		int x = coor[0];
-		int y = coor[1];
+	public Tile[] getAdjacentTiles(int x, int y) {
 		Tile[] adjacent = new Tile[6];
 		int[] temp = new int[2];
 		for(int i = 0; i < adjacent.length; i++) {
@@ -126,7 +158,7 @@ public class Board {
 				temp[0] = 1;
 				temp[1] = 1;
 			}
-			adjacent[i] = getTile(temp);
+			adjacent[i] = getTile(temp[0], temp[1]);
 		}
 		return adjacent;
 	}
