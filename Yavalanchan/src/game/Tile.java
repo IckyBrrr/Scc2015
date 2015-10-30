@@ -3,27 +3,28 @@ package game;
 public class Tile {
 	
 	private boolean isTaken;
-	private byte occupant;
 	private int[] coor = new int[2];
+	private TileState state;
 	
 	public Tile(int x, int y) {
 		isTaken = false;
-		occupant = Main.EMPTY;
+		state = TileState.EMPTY;
 		coor[0] = x;
 		coor[1] = y;
 	}
 	
-	public boolean occupy(byte color, Board board) {
+	// TODO: Single entry, single exit
+	public boolean occupy(TileState occupant, Board board) {
 		if(isTaken) {
 			System.out.println("Space occupied");
 			return false;
 		}
 		
-		if(color == Main.PLAYER_A || color == Main.PLAYER_B) {
+		if(occupant == TileState.WHITE || occupant == TileState.BLACK) {
 			boolean canPlace = false;
 			Tile[] temp = board.getAdjacentTiles(coor);
 			for(int i = 0; i < temp.length; i++) {
-				if(temp[i].getOccupant() == Main.NEUTRAL)
+				if(temp[i].getOccupant() == TileState.NEUTRAL)
 					canPlace = true;
 			}
 			if(!canPlace) {
@@ -32,7 +33,7 @@ public class Tile {
 			}
 		}
 		
-		occupant = color;
+		state = occupant;
 		isTaken = true;
 		return true;
 	}
@@ -40,6 +41,6 @@ public class Tile {
 	public int[] getCoor() { return coor; }
 	public int getX() { return coor[0]; }
 	public int getY() { return coor[1]; }
-	public byte getOccupant() { return occupant; }
+	public TileState getOccupant() { return state; }
 	public boolean isTaken() { return isTaken; }
 }

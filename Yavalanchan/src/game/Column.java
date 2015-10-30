@@ -18,7 +18,7 @@ public class Column {
 		System.out.print("\n");
 	}
 	
-	public boolean occupy(byte color, int y, Board board) {
-		return tiles[y].occupy(color, board);
+	public boolean occupy(TileState occupant, int y, Board board) {
+		return tiles[y].occupy(occupant, board);
 	}
 }

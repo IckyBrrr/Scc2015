@@ -49,7 +49,7 @@ public class Board {
 				int offset = Math.abs((Main.SIZE - 1) - x);
 				int yCor = ((y + 1) * 2 - 1) + offset - 1;
 				
-				output[x][yCor] = Integer.toString(columns[x].tiles[y].getOccupant());
+				output[x][yCor] = columns[x].tiles[y].getOccupant().toString().substring(0, 1);
 			}
 		}
 		
@@ -62,9 +62,9 @@ public class Board {
 		}
 	}
 	
-	public boolean occupy(byte color, int x, int y) {
+	public boolean occupy(TileState occupant, int x, int y) {
 		
-		return columns[x].occupy(color, y, this);
+		return columns[x].occupy(occupant, y, this);
 	}
 	
 	public boolean isAdjacent(int[] coor1, int[] coor2) {

@@ -10,7 +10,7 @@ public class Main {
 	public static final byte PLAYER_B = 2; // Player B
 	public static final byte NEUTRAL = 3; // Neutral
 	
-	public static final int SIZE = 2;
+	public static final int SIZE = 4;
 	
 	public static Scanner in;
 	public static Board board;
@@ -34,7 +34,8 @@ public class Main {
 	public static void update() {
 		int x;
 		int y;
-		byte color;
+		String input;
+		TileState occupant = TileState.EMPTY;
 		boolean canMoveOn;
 		do {
 			do {
@@ -64,15 +65,22 @@ public class Main {
 			canMoveOn = false;
 		
 			System.out.println("What Color?");
-			color = in.nextByte();
-			if(color == EMPTY) {
+			input = in.next();
+			input = input.toLowerCase();
+			if(input.charAt(0) == 'q') {
 				isRunning = false;
 				break;
+			} else if(input.charAt(0) == 'a' || input.charAt(0) == 'w') {
+				occupant = TileState.WHITE;
+			} else if(input.charAt(0) == 'b' || input.charAt(0) == 'b') {
+				occupant = TileState.BLACK;
+			} else if(input.charAt(0) == 'c' || input.charAt(0) == 'n') {
+				occupant = TileState.NEUTRAL;
 			}
-			if(!(color == NEUTRAL || color == PLAYER_A || color == PLAYER_B)) {
+			if(!(occupant == TileState.NEUTRAL || occupant == TileState.WHITE || occupant == TileState.BLACK)) {
 				System.out.println("Invalid color");
 			} else {
-				canMoveOn = board.occupy(color, x, y);
+				canMoveOn = board.occupy(occupant, x, y);
 			}
 		} while(!canMoveOn);
 	}
