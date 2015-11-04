@@ -1,4 +1,3 @@
- - restrict players to only play their color or neutral -
  - find when a row is made
  - find available moves
  - implement minimax & alpha beta pruning

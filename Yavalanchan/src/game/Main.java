@@ -73,9 +73,10 @@ public class Main {
 			}
 
 			if(x != null && y != null) {
+				
 				input = in.next();
 				input = input.toLowerCase();
-				System.out.println(input);
+				
 				if(input.charAt(0) == 'q') {
 					isRunning = false;
 					break;
@@ -88,6 +89,8 @@ public class Main {
 				}
 				if(!(occupant == TileState.NEUTRAL || occupant == TileState.WHITE || occupant == TileState.BLACK)) {
 					System.out.println("Invalid color");
+				} else if ((turn%2 == 0 && occupant == TileState.BLACK) || (turn%2 == 1 && occupant == TileState.WHITE)) {
+					System.out.println("It's not your turn!");
 				} else {
 					canMoveOn = board.occupy(occupant, x, y);
 				}
@@ -97,13 +100,17 @@ public class Main {
 			}
 		} while(!canMoveOn);
 
-		//int tempx = 4, tempy = 4;
-		//System.out.printf("Owner for (%d, %d) is : %s\n", tempx, tempy, board.getTile(tempx, tempy).getOwner().toString());
 		turn++;
 	}
 
 	public static void render() {
-		System.out.printf("Turn %d:\n", turn);
+		String whoseTurn;
+		if(turn % 2 == 0) {
+			whoseTurn = "White";
+		} else {
+			whoseTurn = "Black";
+		}
+		System.out.printf("Turn %d | %s's turn\n", turn, whoseTurn);
 		board.print();
 	}
 
