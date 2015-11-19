@@ -3,46 +3,60 @@ package game;
 public class Tile {
 	
 	private boolean isTaken;
-	private int[] coor = new int[2]; // TODO: change to x's and y's
+	private int xCor, yCor;
 	private TileState state;
 	private TileState owner;
 	
+	/**
+	 * Default constructor
+	 * @param x The x coordinate of the tile
+	 * @param y The y coordinate of the tile
+	 */
 	public Tile(int x, int y) {
 		isTaken = false;
 		state = TileState.EMPTY;
 		owner = TileState.EMPTY;
-		coor[0] = x;
-		coor[1] = y;
+		xCor = x;
+		yCor = y;
 	}
 	
-	// TODO: Single entry, single exit
+	/**
+	 * Attempts to add an occupant to this space
+	 * @param occupant The color tile that you want to occupy the space with
+	 * @param board The board that holds the space
+	 * @return Whether the occupy attempt was successful
+	 */
 	public boolean occupy(TileState occupant, Board board) {
+		boolean isLegal = true;
+		
 		if(isTaken) {
 			System.out.println("Space occupied");
-			return false;
+			isLegal = false;
 		}
 		
-		if(occupant == TileState.WHITE || occupant == TileState.BLACK) {
+		if((occupant == TileState.WHITE || occupant == TileState.BLACK) && isLegal) {
 			boolean canPlace = false;
-			Tile[] temp = board.getAdjacentTiles(coor[0], coor[1]);
+			Tile[] temp = board.getAdjacentTiles(xCor, yCor);
 			for(int i = 0; i < temp.length; i++) {
 				if(temp[i].getOccupant() == TileState.NEUTRAL)
 					canPlace = true;
 			}
 			if(!canPlace) {
 				System.out.println("No adjacent neutral");
-				return false;
+				isLegal = false;
 			}
 		}
 		
-		state = occupant;
-		isTaken = true;
-		return true;
+		if(isLegal) {
+			state = occupant;
+			isTaken = true;
+		}
+		return isLegal;
 	}
 	
-	public int[] getCoor() { return coor; }
-	public int getX() { return coor[0]; }
-	public int getY() { return coor[1]; }
+	// Getters and setters
+	public int getX() { return xCor; }
+	public int getY() { return yCor; }
 	public TileState getOccupant() { return state; }
 	public TileState getOwner() { return owner; }
 	public void setOwner(TileState willOwn) { owner = willOwn; }

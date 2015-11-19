@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 
-	public static final int SIZE = 4;
+	public static final int SIZE = 3;
 	public static final int MIN_VAL = 0;
 
 	public static Scanner in;
@@ -28,22 +28,28 @@ public class Main {
 		}
 	}
 
+	/**
+	 * Steps the game one turn
+	 */
 	public static void update() {
 		Integer x = null, y = null;
 		String input;
 		TileState occupant = TileState.EMPTY;
 		boolean canMoveOn = false;;
 
+		// Input collection
 		do {
 			//TODO: keep valid values
 			System.out.print("What is your move? (x y tile) : ");
 
+			// Checks that the first inputed value is an integer
 			if(in.hasNextInt()) {
 
 				x = in.nextInt() - 1;
 
-				if(x < MIN_VAL || x > board.columns.length) {
-					System.out.printf("X needs to be in between %d and %d\n", MIN_VAL + 1, board.columns.length);
+				// Checks that the x inputed is valid
+				if(x < MIN_VAL || x > board.getColumns().length) {
+					System.out.printf("X needs to be in between %d and %d\n", MIN_VAL + 1, board.getColumns().length);
 					x = null;
 				}
 			} else {
@@ -51,15 +57,19 @@ public class Main {
 				System.out.println("X needs to be an integer");
 				in.next();
 			}
-
+			
+			// Collects Y input
 			if(x != null) {
+				
+				// Checks that the second inputed value is an integer
 				if(in.hasNextInt()) {
 
 					y = in.nextInt() - 1;
 
-					if(y < MIN_VAL || y > board.columns[x].tiles.length) {
+					// Checks that the y inputed is valid
+					if(y < MIN_VAL || y > board.getColumns()[x].tiles.length) {
 
-						System.out.printf("y needs to be in between %d and %d\n", MIN_VAL + 1, board.columns[x].tiles.length);
+						System.out.printf("y needs to be in between %d and %d\n", MIN_VAL + 1, board.getColumns()[x].tiles.length);
 						y = null;
 					}
 				} else {
@@ -72,6 +82,7 @@ public class Main {
 				in.next();
 			}
 
+			// Collects the tile color
 			if(x != null && y != null) {
 				
 				input = in.next();
@@ -103,6 +114,9 @@ public class Main {
 		turn++;
 	}
 
+	/**
+	 * Prints the output for the game
+	 */
 	public static void render() {
 		String whoseTurn;
 		if(turn % 2 == 0) {
@@ -110,11 +124,12 @@ public class Main {
 		} else {
 			whoseTurn = "Black";
 		}
+		String line = "";
+		for(int i = 0; i < 2 * SIZE - 1; i++) {
+			line += "-----";
+		}
+		System.out.println(line);
 		System.out.printf("Turn %d | %s's turn\n", turn, whoseTurn);
 		board.print();
-	}
-
-	public static void print(String str) {
-		System.out.println(str);
 	}
 }

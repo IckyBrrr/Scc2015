@@ -1,10 +1,45 @@
 package game;
 
+/*
+ * A visual explanation of the coordinate system for the board (as the code sees it), using a 3 x 3 hex grid
+ * 
+ * y's
+ *           4            
+ *      3         4       
+ * 2         3         4  
+ *      2         3       
+ * 1         2         3  
+ *      1         2       
+ * 0         1         2  
+ *      0         1       
+ *           0            
+ * x's
+ * 0    1    2    3    4
+ * 
+ * A visual explanation of the coordinate system for the board (as the player sees it), using a 3 x 3 hex grid
+ * 
+ * y's
+ *           5            
+ *      4         4       
+ * 3         4         3  
+ *      3         3       
+ * 2         3         2  
+ *      2         2       
+ * 1         2         1  
+ *      1         1       
+ *           1            
+ * x's
+ * 1    2    3    4    5
+ */
+
 public class Board {
 
-	// TODO: change to private and add getter/setter functions
-	public Column[] columns;
+	private Column[] columns;
 	
+	/**
+	 * Default Constructor
+	 * @param size The side lengths of the hexagonal grid
+	 */
 	public Board(int size) {
 
 		int maxLength = 2 * size - 1;
@@ -26,6 +61,9 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Prints the board to the console
+	 */
 	public void print() {
 		
 		int spacing = 2;
@@ -43,7 +81,7 @@ public class Board {
 			}
 		}
 		
-		// Yes
+		// Sets up the coordinate system for the board
 		for(int x = 0; x < columns.length; x++) {
 			for(int y = 0; y < columns[x].tiles.length; y++) {
 				int offset = Math.abs((Main.SIZE - 1) - x);
@@ -62,27 +100,43 @@ public class Board {
 		}
 	}
 	
+	/**
+	 * Attempts to add an occupant to a space on the board
+	 * @param occupant The color tile you want to occupy the space with
+	 * @param x The x coordinate of the space
+	 * @param y The y coordinate of the space
+	 * @return Whether the occupy was successful
+	 */
 	public boolean occupy(TileState occupant, int x, int y) {
 		boolean isSuccessful = columns[x].occupy(occupant, y, this);
 		if(isSuccessful) {
-			int[] coor = columns[x].tiles[y].getCoor();
-			System.out.printf("(%d, %d)\n", coor[0], coor[1]);
+			
+			// Changes the player coordinates to the program coordinates
+			int tileX = columns[x].tiles[y].getX();
+			int tileY = columns[x].tiles[y].getY();
+			
 			if(occupant == TileState.WHITE || occupant == TileState.BLACK) {
-				// update all adjacent neutral tiles
-				Tile[] adjacentTiles = getAdjacentTiles(coor[0], coor[1]);
+				
+				// Update all adjacent neutral tiles
+				Tile[] adjacentTiles = getAdjacentTiles(tileX, tileY);
 				for(int i = 0; i < adjacentTiles.length; i++) {
 					if(adjacentTiles[i].getOccupant() == TileState.NEUTRAL) {
 						updateOwnership(adjacentTiles[i].getX(), adjacentTiles[i].getY());
 					}
 				}
 			} else if(occupant == TileState.NEUTRAL) {
-				// update this tile
-				updateOwnership(coor[0], coor[1]);
+				// Update this tile
+				updateOwnership(tileX, tileY);
 			}
 		}
 		return isSuccessful;
 	}
 	
+	/**
+	 * Changes the ownership of a neutral space in accordance to neutral tiles, if necessary
+	 * @param x The x of the space
+	 * @param y The y of the space
+	 */
 	private void updateOwnership(int x, int y) {
 		int numWhite = 0, numBlack = 0;
 		Tile[] adjacentTiles= getAdjacentTiles(x, y);
@@ -103,63 +157,82 @@ public class Board {
 		}
 	}
 	
-	public boolean isAdjacent(int[] coor1, int[] coor2) {
-		int x1 = coor1[0];
-		int y1 = coor1[1];
-		int x2 = coor2[0];
-		int y2 = coor2[1];
+	/**
+	 * Checks if two tiles are adjacent
+	 * @param x1 The x of the first space
+	 * @param y1 The y of the first space
+	 * @param x2 The x of the second space
+	 * @param y2 The y of the second space
+	 * @return Whether or not the two tiles are adjacent
+	 */
+	public boolean isAdjacent(int x1, int y1, int x2, int y2) {
 		return((x1 == x2 && Math.abs(y1 - y2) == 1) ||
 			   (Math.abs(x1 - x2) == 1 && Math.abs(y1 - y2) == 1) ||
 			   (Math.abs(x1 - x2) == 1 && y1 == y2));
 	}
 	
-	public Tile getTile(int xCor, int yCor) {
-		for(int x = 0; x < columns.length; x++) {
-			for(int y = 0; y < columns[x].tiles.length; y++) {
-				if(columns[x].tiles[y].getX() == xCor &&
-					columns[x].tiles[y].getY() == yCor) {
-					return columns[x].tiles[y];
+	/**
+	 * Gets a tile with the given coordinates
+	 * @param xCor The x coordinate of the tile
+	 * @param yCor The y coordinate of the tile
+	 * @return The tile at the given coordinates
+	 */
+	public Tile getTile(int x, int y) {
+		for(int column = 0; column < columns.length; column++) {
+			for(int row = 0; row < columns[column].tiles.length; row++) {
+				if(columns[column].tiles[row].getX() == x &&
+					columns[column].tiles[row].getY() == y) {
+					return columns[column].tiles[row];
 				}
 			}
 		}
 		return new Tile(-1, -1);
 	}
 	
+	/**
+	 * Returns a list of all the tiles adjacent to a given tile
+	 * @param x The x of the tile
+	 * @param y The y of the tile
+	 * @return A list of adjacent tiles
+	 */
 	public Tile[] getAdjacentTiles(int x, int y) {
 		Tile[] adjacent = new Tile[6];
-		int[] temp = new int[2];
+		int tempX, tempY;
 		for(int i = 0; i < adjacent.length; i++) {
 			switch(i) {
 			case 0:
-				temp[0] = x;
-				temp[1] = y + 1;
+				tempX = x;
+				tempY = y + 1;
 				break;
 			case 1:
-				temp[0] = x;
-				temp[1] = y - 1;
+				tempX = x;
+				tempY = y - 1;
 				break;
 			case 2:
-				temp[0] = x - 1;
-				temp[1] = y;
+				tempX = x - 1;
+				tempY = y;
 				break;
 			case 3:
-				temp[0] = x - 1;
-				temp[1] = y - 1;
+				tempX = x - 1;
+				tempY = y - 1;
 				break;
 			case 4:
-				temp[0] = x + 1;
-				temp[1] = y + 1;
+				tempX = x + 1;
+				tempY = y + 1;
 				break;
 			case 5:
-				temp[0] = x + 1;
-				temp[1] = y;
+				tempX = x + 1;
+				tempY = y;
 				break;
 			default:
-				temp[0] = 1;
-				temp[1] = 1;
+				tempX = 1;
+				tempY = 1;
 			}
-			adjacent[i] = getTile(temp[0], temp[1]);
+			adjacent[i] = getTile(tempX, tempY);
 		}
 		return adjacent;
 	}
+	
+	// Getters
+	public Column[] getColumns() { return columns; }
 }
