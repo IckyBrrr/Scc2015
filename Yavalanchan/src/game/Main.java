@@ -1,5 +1,6 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -111,6 +112,13 @@ public class Main {
 			}
 		} while(!canMoveOn);
 
+		ArrayList<Chain> chains = board.findChains();
+		for(Chain c : chains)
+			if(c.getLength() == SIZE) {
+				System.out.print("Game won with ");
+				c.printChain();
+				isRunning = false;
+			}
 		turn++;
 	}
 
@@ -129,7 +137,10 @@ public class Main {
 			line += "-----";
 		}
 		System.out.println(line);
-		System.out.printf("Turn %d | %s's turn\n", turn, whoseTurn);
+		if(isRunning)
+			System.out.printf("Turn %d | %s's turn\n", turn, whoseTurn);
+		else
+			System.out.printf("Turn %d | Winning state\n", turn);
 		board.print();
 	}
 }

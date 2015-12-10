@@ -1,5 +1,7 @@
 package game;
 
+import java.util.ArrayList;
+
 /*
  * A visual explanation of the coordinate system for the board (as the code sees it), using a 3 x 3 hex grid
  * 
@@ -231,6 +233,88 @@ public class Board {
 			adjacent[i] = getTile(tempX, tempY);
 		}
 		return adjacent;
+	}
+	
+	public ArrayList<Chain> findChains() {
+		
+		ArrayList<Chain> chains = new ArrayList<Chain>();
+		
+		for(Column cols : columns) {
+			for(Tile tile : cols.tiles) {
+				/*
+				 * if(tile.state != EMPTY)
+				 * 	search adjacent tiles, if same state is found, go through both directions for chain
+				 * 	delete redundancies
+				 */
+				if(tile.getOwner() != TileState.EMPTY) {
+					Tile[] temps = getAdjacentTiles(tile.getX(), tile.getY());
+					
+					// Cycle through the adjacent tiles
+					for(Tile adjacent : temps) {
+						// If one matches, start searching for chains
+						if(adjacent.getOwner() == tile.getOwner()) {
+							
+							Chain tempChain = new Chain(tile.getOwner());
+							
+							int dy = adjacent.getY() - tile.getY(); // Delta X
+							int dx = adjacent.getX() - tile.getX(); // Delta Y
+							int tx = tile.getX();
+							int ty = tile.getY();
+							
+							boolean chainContinues = false;
+							
+							// Search for a start point in one direction
+							do {
+								tx += dx;
+								ty += dy;
+								if(getTile(tx, ty).getOwner() == tile.getOwner()) {
+									chainContinues = true;
+								} else {
+									tempChain.setStart(tx - dx, ty - dy);
+									chainContinues = false;
+								}
+							} while(chainContinues);
+							tx = tile.getX();
+							ty = tile.getY();
+							
+							// Search for an end point in the other direction
+							do {
+								tx -= dx;
+								ty -= dy;
+								if(getTile(tx, ty).getOwner() == tile.getOwner()) {
+									chainContinues = true;
+								} else {
+									tempChain.setEnd(tx + dx, ty + dy);
+									chainContinues = false;
+								}
+							} while(chainContinues);
+							
+							// Switch start and end points if necessary
+							tempChain.rectify();
+							
+							// Add to list of chains
+							boolean canAdd = true;
+							if(chains.size() > 0) {
+								for(Chain c : chains) {
+									if((c.getStartX() == tempChain.getStartX() &&
+									   c.getStartY() == tempChain.getStartY() &&
+									   c.getEndX() == tempChain.getEndX() &&
+									   c.getEndY() == tempChain.getEndY()))
+										canAdd = false;
+								}
+							} else {
+								canAdd = true;
+							}
+							
+							if(canAdd)
+								chains.add(tempChain);
+						}
+					}
+				}
+			}
+		}
+		
+		return chains;
 	}
 	
 	// Getters

@@ -49,6 +49,7 @@ public class Tile {
 		
 		if(isLegal) {
 			state = occupant;
+			if(occupant != TileState.NEUTRAL) owner = occupant;
 			isTaken = true;
 		}
 		return isLegal;
