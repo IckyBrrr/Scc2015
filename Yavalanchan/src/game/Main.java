@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
 
-	public static final int SIZE = 3;
+	public static final int SIZE = 5;
 	public static final int MIN_VAL = 0;
 
 	public static Scanner in;
@@ -13,6 +13,8 @@ public class Main {
 
 	public static boolean isRunning;
 	public static int turn;
+	
+	private static TileState player = TileState.WHITE;
 
 	public static void main(String[] args) {
 
@@ -33,10 +35,25 @@ public class Main {
 	 * Steps the game one turn
 	 */
 	public static void update() {
+		
+		ArrayList<String> possibleMoves = getPossibleMoves(board, player);
+		int i = 0;
+		System.out.println("Possible moves :");
+		for(String move : possibleMoves) {
+			System.out.printf("Move %d : %s\n", i, move);
+			i++;
+		}
+		
 		Integer x = null, y = null;
 		String input;
 		TileState occupant = TileState.EMPTY;
 		boolean canMoveOn = false;;
+		
+		if(turn %2 == 0) {
+			player = TileState.WHITE;
+		} else {
+			player = TileState.BLACK;
+		}
 
 		// Input collection
 		do {
@@ -101,10 +118,14 @@ public class Main {
 				}
 				if(!(occupant == TileState.NEUTRAL || occupant == TileState.WHITE || occupant == TileState.BLACK)) {
 					System.out.println("Invalid color");
-				} else if ((turn%2 == 0 && occupant == TileState.BLACK) || (turn%2 == 1 && occupant == TileState.WHITE)) {
+				} else if ((player == TileState.WHITE && occupant == TileState.BLACK) || (player == TileState.BLACK && occupant == TileState.WHITE)) {
 					System.out.println("It's not your turn!");
 				} else {
 					canMoveOn = board.occupy(occupant, x, y);
+					
+					if(!canMoveOn) {
+						System.out.println("Invalid Move");
+					}
 				}
 			} else {
 				canMoveOn = false;
@@ -113,34 +134,54 @@ public class Main {
 		} while(!canMoveOn);
 
 		ArrayList<Chain> chains = board.findChains();
-		for(Chain c : chains)
+		for(Chain c : chains) {
 			if(c.getLength() == SIZE) {
 				System.out.print("Game won with ");
 				c.printChain();
 				isRunning = false;
 			}
+		}
+		
 		turn++;
+	}
+	
+	/**
+	 * Returns all possible moves to be made at the current board state
+	 * @param tempBoard The board the moves will be checked against
+	 * @param tempPlayer The player whose turn it is
+	 * @return An array of possible moves
+	 */
+	public static ArrayList<String> getPossibleMoves(Board tempBoard, TileState tempPlayer) {
+		ArrayList<String> possibleMoves = new ArrayList<String>();
+		
+		for(Column c : tempBoard.getColumns()) {
+			for(Tile tile : c.tiles) {
+				
+				if(tile.canOccupy(tempPlayer, tempBoard)) {
+					possibleMoves.add(tile.getPlayerX() + " " + tile.getPlayerY() + " " + tempPlayer.toString().charAt(0));
+				} 
+				if(tile.canOccupy(TileState.NEUTRAL, tempBoard)) {
+					possibleMoves.add(tile.getPlayerX() + " " + tile.getPlayerY() + " " + TileState.NEUTRAL.toString().charAt(0));
+				}
+			}
+		}
+		
+		return possibleMoves;
 	}
 
 	/**
 	 * Prints the output for the game
 	 */
 	public static void render() {
-		String whoseTurn;
-		if(turn % 2 == 0) {
-			whoseTurn = "White";
-		} else {
-			whoseTurn = "Black";
-		}
 		String line = "";
 		for(int i = 0; i < 2 * SIZE - 1; i++) {
 			line += "-----";
 		}
 		System.out.println(line);
 		if(isRunning)
-			System.out.printf("Turn %d | %s's turn\n", turn, whoseTurn);
+			System.out.printf("Turn %d | %s\n", turn, player.toString());
 		else
-			System.out.printf("Turn %d | Winning state\n", turn);
+			System.out.printf("Turn %d | End state\n", turn);
 		board.print();
 	}
 }

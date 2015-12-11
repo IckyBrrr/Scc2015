@@ -4,6 +4,7 @@ public class Tile {
 	
 	private boolean isTaken;
 	private int xCor, yCor;
+	private int pX, pY;
 	private TileState state;
 	private TileState owner;
 	
@@ -12,25 +13,45 @@ public class Tile {
 	 * @param x The x coordinate of the tile
 	 * @param y The y coordinate of the tile
 	 */
-	public Tile(int x, int y) {
+	public Tile(int x, int y, int pX, int pY) {
 		isTaken = false;
 		state = TileState.EMPTY;
 		owner = TileState.EMPTY;
 		xCor = x;
 		yCor = y;
+		this.pX = pX;
+		this.pY = pY;
 	}
 	
 	/**
-	 * Attempts to add an occupant to this space
+	 * Adds a tile to the board if the move is legal
 	 * @param occupant The color tile that you want to occupy the space with
 	 * @param board The board that holds the space
 	 * @return Whether the occupy attempt was successful
 	 */
 	public boolean occupy(TileState occupant, Board board) {
+		boolean isSuccess = false;
+		
+		if(canOccupy(occupant, board)) {
+			state = occupant;
+			if(occupant != TileState.NEUTRAL) owner = occupant;
+			isTaken = true;
+			isSuccess = true;
+		}
+		
+		return isSuccess;
+	}
+	
+	/**
+	 * Returns if a move is legal
+	 * @param occupant The color tile that you want to occupy the space with
+	 * @param board The board that holds the space
+	 * @return Whether the occupy was successful
+	 */
+	public boolean canOccupy(TileState occupant, Board board) {
 		boolean isLegal = true;
 		
 		if(isTaken) {
-			System.out.println("Space occupied");
 			isLegal = false;
 		}
 		
@@ -42,15 +63,8 @@ public class Tile {
 					canPlace = true;
 			}
 			if(!canPlace) {
-				System.out.println("No adjacent neutral");
 				isLegal = false;
 			}
-		}
-		
-		if(isLegal) {
-			state = occupant;
-			if(occupant != TileState.NEUTRAL) owner = occupant;
-			isTaken = true;
 		}
 		return isLegal;
 	}
@@ -58,6 +72,10 @@ public class Tile {
 	// Getters and setters
 	public int getX() { return xCor; }
 	public int getY() { return yCor; }
+	
+	public int getPlayerX() { return pX; }
+	public int getPlayerY() { return pY; }
+	
 	public TileState getOccupant() { return state; }
 	public TileState getOwner() { return owner; }
 	public void setOwner(TileState willOwn) { owner = willOwn; }

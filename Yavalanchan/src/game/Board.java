@@ -59,7 +59,7 @@ public class Board {
 			if(x <= size) offset = 0;
 			else offset = x - size;
 			
-			columns[i] = new Column(y, x, offset);
+			columns[i] = new Column(y, x, i + 1, offset);
 		}
 	}
 	
@@ -110,7 +110,7 @@ public class Board {
 	 * @return Whether the occupy was successful
 	 */
 	public boolean occupy(TileState occupant, int x, int y) {
-		boolean isSuccessful = columns[x].occupy(occupant, y, this);
+		boolean isSuccessful = columns[x].tiles[y].occupy(occupant, this);
 		if(isSuccessful) {
 			
 			// Changes the player coordinates to the program coordinates
@@ -188,7 +188,7 @@ public class Board {
 				}
 			}
 		}
-		return new Tile(-1, -1);
+		return new Tile(-1, -1, -1, -1);
 	}
 	
 	/**
@@ -241,11 +241,6 @@ public class Board {
 		
 		for(Column cols : columns) {
 			for(Tile tile : cols.tiles) {
-				/*
-				 * if(tile.state != EMPTY)
-				 * 	search adjacent tiles, if same state is found, go through both directions for chain
-				 * 	delete redundancies
-				 */
 				if(tile.getOwner() != TileState.EMPTY) {
 					Tile[] temps = getAdjacentTiles(tile.getX(), tile.getY());
 					
