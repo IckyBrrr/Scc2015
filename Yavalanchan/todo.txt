@@ -1,3 +1,0 @@
- - find available moves
- - implement minimax & alpha beta pruning
- - replace column class with two dimensional array
